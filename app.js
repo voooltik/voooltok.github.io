@@ -71,10 +71,89 @@ window.addEventListener('load', () => {
       type: "visit",
       age: "teen",
       image: "https://via.placeholder.com/400x200.png?text=Музей+Истории"
-    }
+    },
+    {
+      name: "Кофейня 'Черный кот'",
+      description: "Модная кофейня с атмосферой минимализма и specialty-кофе.",
+      coordinates: [57.6223, 39.8915],
+      type: "eat",
+      age: "teen",
+      image: "https://via.placeholder.com/400x200.png?text=Черный+кот+кофейня"
+    },
+    {
+      name: "Уличный арт на ул. Свободы",
+      description: "Граффити и муралы на фасадах домов — отличное место для фото.",
+      coordinates: [57.6211, 39.8932],
+      type: "walk",
+      age: "all",
+      image: "https://via.placeholder.com/400x200.png?text=Стрит-Арт+Свобода"
+    },
+    {
+      name: "Бар 'Гараж'",
+      description: "Современный бар с живой музыкой по выходным. Только для взрослых.",
+      coordinates: [57.6230, 39.8880],
+      type: "eat",
+      age: "adult",
+      image: "https://via.placeholder.com/400x200.png?text=Бар+Гараж"
+    },
+    {
+      name: "Смотровая площадка на Стрелке",
+      description: "Панорамный вид на слияние Волги и Которосли, особенно красиво на закате.",
+      coordinates: [57.6264, 39.8848],
+      type: "walk",
+      age: "all",
+      image: "https://upload.wikimedia.org/wikipedia/commons/3/3c/Yaroslavl_strelka.jpg"
+    },
+    {
+      name: "Музей современного искусства",
+      description: "Выставки местных и российских художников, инсталляции и перформансы.",
+      coordinates: [57.6199, 39.8910],
+      type: "visit",
+      age: "teen",
+      image: "https://via.placeholder.com/400x200.png?text=Музей+Совр+Искусства"
+    },
+    {
+      name: "Лофт-площадка 'Фабрика'",
+      description: "Креативное пространство с маркетами, лекциями и мастер-классами.",
+      coordinates: [57.6248, 39.8861],
+      type: "visit",
+      age: "teen",
+      image: "https://via.placeholder.com/400x200.png?text=Фабрика+Лофт"
+    },
+    {
+      name: "Парк 1000-летия",
+      description: "Большой городской парк с дорожками, качелями и фудкортами.",
+      coordinates: [57.6273, 39.8857],
+      type: "walk",
+      age: "child",
+      image: "https://via.placeholder.com/400x200.png?text=Парк+1000-летия"
+    },
+    {
+      name: "Бургерная 'Мясоедов'",
+      description: "Авторские бургеры, мясо на гриле, craft-напитки.",
+      coordinates: [57.6227, 39.8822],
+      type: "eat",
+      age: "all",
+      image: "https://via.placeholder.com/400x200.png?text=Мясоедов"
+    },
+    {
+      name: "VR-клуб 'Альфа'",
+      description: "Погрузитесь в виртуальную реальность — игры и квесты для всех возрастов.",
+      coordinates: [57.6255, 39.8888],
+      type: "visit",
+      age: "teen",
+      image: "https://via.placeholder.com/400x200.png?text=VR+Клуб+Альфа"
+    },
+    {
+      name: "Ярославский Арбат (ул. Кирова)",
+      description: "Пешеходная улица с кафе, сувенирными лавками и уличными музыкантами.",
+      coordinates: [57.6218, 39.8869],
+      type: "walk",
+      age: "all",
+      image: "https://via.placeholder.com/400x200.png?text=Ярославский+Арбат"
+    }    
   ];
 
-  // Показываем маршрут
   document.getElementById('show-route').addEventListener('click', () => {
     const ageFilter = document.getElementById('age').value;
     const duration = parseInt(document.getElementById('duration').value);
@@ -167,12 +246,12 @@ window.addEventListener('load', () => {
     renderTinderCard();
   });
 
-  // Аудиогид и "Назад"
-  document.getElementById('audio-btn').addEventListener('click', () => {
-    alert("🔊 Здесь будет аудиогид.");
+  // Аудиогид и назад
+  document.getElementById('audio-btn')?.addEventListener('click', () => {
+    alert("🔊 Аудиогид скоро будет доступен.");
   });
 
-  document.getElementById('back-to-tinder').addEventListener('click', () => {
+  document.getElementById('back-to-tinder')?.addEventListener('click', () => {
     sections.placeInfo.style.display = 'none';
     sections.tinder.style.display = 'block';
   });
@@ -193,21 +272,47 @@ window.addEventListener('load', () => {
       });
   }
 
+  // ✅ ОСНОВНАЯ ФУНКЦИЯ ПОСТРОЕНИЯ МАРШРУТА С РАССТОЯНИЕМ И ВРЕМЕНЕМ
   function renderMap(startCoords, targets) {
     const map = L.map('map').setView(startCoords, 14);
     L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '&copy; OpenStreetMap contributors'
     }).addTo(map);
 
-    const latlngs = [];
     L.marker(startCoords).addTo(map).bindPopup("Стартовая точка").openPopup();
-    targets.forEach(coord => {
-      L.marker(coord).addTo(map);
-      latlngs.push(coord);
-    });
 
-    if (latlngs.length > 1) {
-      L.polyline([startCoords, ...latlngs], { color: 'deepskyblue' }).addTo(map);
-    }
+    if (targets.length === 0) return;
+
+    const end = targets[0];
+
+    const url = `https://router.project-osrm.org/route/v1/foot/${startCoords[1]},${startCoords[0]};${end[1]},${end[0]}?overview=full&geometries=geojson`;
+
+    fetch(url)
+      .then(res => res.json())
+      .then(data => {
+        const route = data.routes[0];
+        if (!route) throw new Error("Маршрут не найден");
+
+        const distanceKm = (route.distance / 1000).toFixed(2);
+        const durationMin = Math.round(route.duration / 60);
+
+        L.geoJSON(route.geometry, {
+          style: {
+            color: 'deepskyblue',
+            weight: 5
+          }
+        }).addTo(map);
+
+        L.marker(end).addTo(map).bindPopup("Пункт назначения");
+
+        const info = document.getElementById('route-info');
+        const summary = document.createElement('div');
+        summary.style.marginTop = '1rem';
+        summary.innerHTML = `<p><strong>Дистанция:</strong> ${distanceKm} км<br><strong>Время в пути:</strong> ~${durationMin} мин</p>`;
+        info.prepend(summary);
+      })
+      .catch(() => {
+        alert("Не удалось построить маршрут. Проверьте координаты.");
+      });
   }
 });
