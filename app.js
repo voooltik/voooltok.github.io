@@ -151,7 +151,40 @@ window.addEventListener('load', () => {
       type: "walk",
       age: "all",
       image: "https://via.placeholder.com/400x200.png?text=Ярославский+Арбат"
-    }    
+    },
+    {
+  name: "Граффити «Космос»",
+  description: "Огромный мурал с изображением космонавта на фасаде дома. Привлекает любителей современного искусства.",
+  coordinates: [57.6197, 39.8929],
+  type: "walk",
+  age: "all",
+  image: "https://via.placeholder.com/400x200.png?text=Граффити+Космос"
+},
+{
+  name: "Арт-стена на ул. Победы",
+  description: "Серия уличных картин на тему Ярославля глазами детей и художников.",
+  coordinates: [57.6183, 39.8842],
+  type: "walk",
+  age: "all",
+  image: "https://via.placeholder.com/400x200.png?text=Арт+стена"
+},
+{
+  name: "Инсталляция «Волга внутри нас»",
+  description: "Современное арт-решение в виде стальных волн. Расположено в сквере недалеко от центра.",
+  coordinates: [57.6221, 39.8888],
+  type: "visit",
+  age: "all",
+  image: "https://via.placeholder.com/400x200.png?text=Инсталляция+Волга"
+},
+{
+  name: "Летняя галерея стрит-арта (двор на ул. Революционной)",
+  description: "Каждое лето здесь появляются новые граффити. Отличное место для вдохновения.",
+  coordinates: [57.6234, 39.8837],
+  type: "walk",
+  age: "all",
+  image: "https://via.placeholder.com/400x200.png?text=Летняя+галерея"
+}
+
   ];
 
   document.getElementById('show-route').addEventListener('click', () => {
